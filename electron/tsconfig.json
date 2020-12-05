@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "outDir": "../build/electron",
+    "baseUrl": "."
+  },
+  "include": [".", "../src/types"],
+  "exclude": ["node_modules"]
+}
