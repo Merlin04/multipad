@@ -20,8 +20,10 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "cross-env BROWSER=none react-scripts start",
-    "build-electron": "tsc --project electron/tsconfig.json",
+    "start": "nf start -p 3000",
+    "start-react": "cross-env BROWSER=none react-scripts start",
+    "start-electron": "ts-node --skip-project electron/connect-electron.ts",
+    "watch-electron": "tsc --watch --project electron/tsconfig.json",
     "run-electron": "electron .",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -51,6 +53,7 @@
     "electron": "^11.0.3",
     "electron-builder": "^22.9.1",
     "foreman": "^3.0.1",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "ts-node": "^9.1.0"
   }
 }
