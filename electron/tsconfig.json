@@ -3,6 +3,10 @@
     "module": "commonjs",
     "noImplicitAny": true,
     "sourceMap": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "types"
+    ],
     "outDir": "../build/electron",
     "baseUrl": "."
   },

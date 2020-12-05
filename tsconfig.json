@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "build/dist",
     "target": "es5",
     "lib": [
       "ES6",

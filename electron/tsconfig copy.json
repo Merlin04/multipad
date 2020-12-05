@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2016",
+    "module": "commonjs",
+    "lib": [
+      "ESNext"
+    ],
+    "strict": true,
+    "rootDir": ".",
+    "plugins": [],
+    "typeRoots": [
+      "node_modules/@types",
+      "types"
+    ],
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "strictPropertyInitialization": false,
+    "outDir": "../build/electron",
+    "baseUrl": "."
+  },
+  "include": [".", "../src/types"],
+  "exclude": ["node_modules"]
+}
