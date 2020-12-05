@@ -8,23 +8,17 @@ function createWindow() {
     const displays = screen.getAllDisplays();
     const externalDisplay = displays.find((display) => (display.bounds.x !== 0 || display.bounds.y !== 0));
 
-    let mainWindow;
-    if(externalDisplay) {
-        mainWindow = new BrowserWindow({
-            width: 800,
-            height: 600,
-            x: externalDisplay.bounds.x + 50,
-            y: externalDisplay.bounds.y + 50
-        });
-    }
-    else {
-        mainWindow = new BrowserWindow({
-            width: 800,
-            height: 600,
-            x: 50,
-            y: 50
-        });
-    }
+    let mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        x: externalDisplay ? externalDisplay.bounds.x + 50 : 50,
+        y: externalDisplay ? externalDisplay.bounds.y + 50 : 50,
+        frame: false,
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true
+        }
+    });
 
     mainWindow.loadURL(
         process.env.ELECTRON_START_URL || url.format({
