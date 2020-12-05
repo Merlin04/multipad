@@ -1,8 +1,13 @@
+const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin');
+
 module.exports = {
     webpack: {
         configure: {
             target: "electron-renderer",
         },
+        plugins: [
+            new MonacoEditorWebpackPlugin()
+        ]
     },
     plugins: [
         {
