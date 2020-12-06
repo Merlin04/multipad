@@ -38,6 +38,7 @@ export default function MarkdownModule(props: ModuleProps) {
     const styles = useStyles();
     const { openPath, setOpenPath } = useOpenPath();
     const [ editorContents, setEditorContents ] = useState("");
+    const [ firstLoad, setFirstLoad ] = useState(true);
 
     useEffect(() => {
         const fileContents = openPath === undefined ? "" : fs.readFileSync(openPath, 'utf8');
@@ -58,6 +59,10 @@ export default function MarkdownModule(props: ModuleProps) {
     }, [props.lastSave]);
 
     useEffect(() => {
+        if(firstLoad) {
+            setFirstLoad(false);
+            return;
+        }
         if(props.newToggle === undefined) return;
         setOpenPath(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps

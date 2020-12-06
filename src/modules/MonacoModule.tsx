@@ -41,6 +41,7 @@ export default function MonacoModule(props: ModuleProps) {
     const { openPath, setOpenPath } = useOpenPath();
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
     const [ editorContents, setEditorContents ] = useState("");
+    const [ firstLoad, setFirstLoad ] = useState(true);
 
     function handleEditorDidMount(_: any, editor: any) {
         editorRef.current = editor;
@@ -81,6 +82,10 @@ export default function MonacoModule(props: ModuleProps) {
     }, [props.lastSave]);
 
     useEffect(() => {
+        if(firstLoad) {
+            setFirstLoad(false);
+            return;
+        }
         if(props.newToggle === undefined) return;
         setOpenPath(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps

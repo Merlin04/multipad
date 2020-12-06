@@ -28,6 +28,7 @@ function App() {
 
   useEffect(() => {
     setLastSave(undefined);
+    setNewToggle(undefined);
   }, [module])
 
   async function openFile() {
