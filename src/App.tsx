@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import WindowChrome from './components/WindowChrome';
 import { chooseModule } from './modules/modules';
+import { useOpenPath } from './providers/OpenPathProvider';
 const { dialog } = window.require("electron").remote;
 
 const useStyles = makeStyles((theme) => ({
@@ -15,7 +16,9 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const styles = useStyles();
-  const [ openPath, setOpenPath ] = useState(undefined as string | undefined);
+  const [ lastSave, setLastSave ] = useState(undefined as Date | undefined);
+  const [ newToggle, setNewToggle ] = useState(undefined as boolean | undefined);
+  const { openPath, setOpenPath} = useOpenPath();
 
   async function openFile() {
     const results: {
@@ -27,12 +30,20 @@ function App() {
     setOpenPath(file);
   }
 
-  const Module = chooseModule(openPath ?? "f.txt");
+  const Module = chooseModule(openPath ?? "file.txt");
+
+  function saveFile() {
+    setLastSave(new Date());
+  }
+
+  function newFile() {
+    setNewToggle(!newToggle);
+  }
 
   return (
     <div className={"App " + styles.app}>
-      <WindowChrome openPath={openPath} openFile={openFile} />
-      <Module openPath={openPath} />
+      <WindowChrome saveFile={saveFile} newFile={newFile} openFile={openFile} />
+      <Module lastSave={lastSave} newToggle={newToggle} />
     </div>
   );
 }

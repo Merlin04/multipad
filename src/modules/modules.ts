@@ -2,7 +2,8 @@ import path from 'path';
 import MonacoModule from './MonacoModule';
 
 export interface ModuleProps {
-    openPath: string | undefined
+    lastSave: Date | undefined,
+    newToggle: boolean | undefined
 }
 
 export function chooseModule(filePath: string) {
