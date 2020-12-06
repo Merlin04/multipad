@@ -2,6 +2,8 @@
 ![Logo](logo.png)
 ### Notepad for the future - a swiss army knife file editor/viewer
 
+**Note: Multipad is still being actively developed and may contain bugs. Don't use it on any important documents until I've been able to test everything, fix all of the bugs, and make a release version.**
+
 Multipad is a multitool for editing and viewing files. It's a modern Notepad replacement, but its capabilities go far beyond those of Notepad.
 
 Often, you need a text editor in between Notepad and an IDE like VS Code - Notepad doesn't have features like auto indentation or syntax highlighting, and for a while didn't even support Unix line endings. However, VS Code is way too heavy for just editing a single text file; it works better when editing an entire project. This is where Multipad comes in. It has just enough powerful features to make editing single files much easier, but not so much that it becomes overkill and too complex for the task.
