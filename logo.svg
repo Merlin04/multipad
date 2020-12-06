@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="150.5005mm"
+   height="47.558571mm"
+   viewBox="0 0 150.5005 47.558571"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.1 (1.0.1+r74)"
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="/home/benjamin/multipad/_logo.png"
+   inkscape:export-xdpi="200"
+   inkscape:export-ydpi="200">
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1045">
+      <stop
+         style="stop-color:#005c94;stop-opacity:1"
+         offset="0"
+         id="stop1041" />
+      <stop
+         style="stop-color:#2d2d2d;stop-opacity:1"
+         offset="1"
+         id="stop1043" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1045"
+       id="linearGradient1047"
+       x1="25.991652"
+       y1="77.811241"
+       x2="73.539925"
+       y2="77.811241"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(25.207298,57.490854)" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="319.78684"
+     inkscape:cy="47.307619"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1019"
+     inkscape:window-x="600"
+     inkscape:window-y="34"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-25.207298,-57.490854)">
+    <rect
+       style="fill:#ffffff;stroke:none;stroke-width:0.803769"
+       id="rect1091"
+       width="168.79457"
+       height="53.339546"
+       x="16.060266"
+       y="54.600365" />
+    <path
+       style="fill:url(#linearGradient1047);fill-opacity:1;stroke-width:0.264583"
+       d="m 36.495857,94.266528 c -9.45321,-9.475353 -10.79353,-10.91923 -11.05331,-11.907356 -0.64628,-2.458272 -0.77535,-2.291898 10.92538,-14.083526 5.84513,-5.890549 10.68929,-10.743092 10.76478,-10.78343 0.0755,-0.04034 1.02521,0.820568 2.11047,1.913122 l 1.97321,1.986462 -9.6511,9.642177 c -5.3081,5.303197 -9.69289,9.844516 -9.74397,10.091819 -0.0623,0.301765 3.11316,3.656565 9.65555,10.200749 l 9.74844,9.751105 -1.98588,1.98588 -1.98588,1.98589 z m 22.07622,-1.186058 -1.91256,-1.912559 4.75911,-4.784421 c 2.61751,-2.631435 4.75911,-4.948391 4.75911,-5.148797 0,-0.200405 -2.14248,-2.518247 -4.76106,-5.15076 l -4.76107,-4.786387 2.05865,-2.046571 2.05864,-2.046572 5.70908,5.758374 c 6.2058,6.259398 6.52035,6.718221 6.1833,9.019359 -0.17349,1.184444 -0.42973,1.486741 -6.03856,7.123911 -3.22156,3.237839 -5.92143,5.88698 -5.99973,5.88698 -0.0783,0 -1.003,-0.86065 -2.05491,-1.912557 z"
+       id="path1039" />
+    <text
+       xml:space="preserve"
+       style="font-size:26.0191px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';letter-spacing:0px;word-spacing:0px;stroke-width:0.887013"
+       x="75.900154"
+       y="90.900253"
+       id="text1053"><tspan
+         sodipodi:role="line"
+         id="tspan1051"
+         x="75.900154"
+         y="90.900253"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Roboto;-inkscape-font-specification:Roboto;stroke-width:0.887013">Multipad</tspan></text>
+  </g>
+</svg>
