@@ -1,12 +1,20 @@
-import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import WindowChrome from './components/WindowChrome';
-import fs from 'fs';
-import path from 'path';
-import MonacoModule from './modules/MonacoModule';
+import { chooseModule } from './modules/modules';
 const { dialog } = window.require("electron").remote;
 
+const useStyles = makeStyles((theme) => ({
+  app: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    position: "relative"
+  }
+}));
+
 function App() {
+  const styles = useStyles();
   const [ openPath, setOpenPath ] = useState(undefined as string | undefined);
 
   async function openFile() {
@@ -19,10 +27,12 @@ function App() {
     setOpenPath(file);
   }
 
+  const Module = chooseModule(openPath ?? "f.txt");
+
   return (
-    <div className="App">
+    <div className={"App " + styles.app}>
       <WindowChrome openPath={openPath} openFile={openFile} />
-      <MonacoModule openPath={openPath} />
+      <Module openPath={openPath} />
     </div>
   );
 }
