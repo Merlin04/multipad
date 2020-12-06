@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { OpenPathProvider } from './providers/OpenPathProvider';
+import { EditorStateProvider } from './providers/EditorStateProvider';
 
 ReactDOM.render(
   <React.StrictMode>
-    <OpenPathProvider>
+    <EditorStateProvider>
       <App />
-    </OpenPathProvider>
+    </EditorStateProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

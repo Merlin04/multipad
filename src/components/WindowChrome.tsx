@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, makeStyles, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Typography, makeStyles, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider, ListSubheader } from '@material-ui/core';
 import {
     Menu as MenuIcon,
     Save as SaveIcon,
@@ -9,9 +9,11 @@ import {
     Maximize as MaximizeIcon,
     Close as CloseIcon } from '@material-ui/icons';
 import path from 'path';
-import { useOpenPath } from '../providers/OpenPathProvider';
+import { useModule, useOpenPath } from '../providers/EditorStateProvider';
 import defer from 'lodash/defer';
-const { BrowserWindow } = window.require("electron").remote;
+import fs from 'fs';
+import { getModuleOptions, getNameOfOption, ModuleOption } from '../modules/modules';
+const { BrowserWindow, dialog } = window.require("electron").remote;
 
 interface ChromeProps {
     saveFile: {(): void},
@@ -41,12 +43,29 @@ const useStyles = makeStyles((theme) => ({
     toolbar: {
         height: "2.5rem",
         paddingLeft: "16px"
+    },
+    sectionHeader: {
+        fontSize: "1rem"
+    },
+    subheader: {
+        fontSize: "0.8em",
+        lineHeight: "1rem"
+    },
+    drawer: {
+        maxWidth: "170px"
+    },
+    fileName: {
+        wordBreak: "break-all",
+        lineHeight: "1.2rem",
+        marginTop: "8px",
+        marginBottom: "8px"
     }
 }));
 
 export default function WindowChrome(props: ChromeProps) {
     const styles = useStyles();
-    const { openPath } = useOpenPath();
+    const { openPath, setOpenPath } = useOpenPath();
+    const { setModule } = useModule();
     const [ drawerOpen, setDrawerIsOpen ] = useState(false);
 
     const mainButtons: IMainButton[] = [
@@ -84,6 +103,30 @@ export default function WindowChrome(props: ChromeProps) {
         BrowserWindow.getFocusedWindow()?.close();
     }
 
+    function saveAs() {
+        // This shouldn't vary between modules, all it does is copy the file and set the path to the new one
+        if(openPath === undefined) {
+            props.saveFile();
+            return;
+        }
+        const result: string | undefined = dialog.showSaveDialogSync();
+        if(result === undefined) return;
+        fs.copyFile(openPath, result, (err) => {
+            if(err) console.error(err);
+            setOpenPath(result);
+        })
+    }
+
+    function OptionButton({ option }: { option: ModuleOption }) {
+        return (
+            <ListItem button onClick={() => { setDrawerIsOpen(false); setModule(option); }}>
+                <ListItemText>{getNameOfOption(option)}</ListItemText>
+            </ListItem>
+        );
+    }
+
+    const moduleOptions = getModuleOptions(openPath ?? "file.txt");
+
     return (
         <>
             <AppBar position="static" className={styles.windowChrome}>
@@ -101,10 +144,12 @@ export default function WindowChrome(props: ChromeProps) {
                 </Toolbar>
             </AppBar>
             <Drawer anchor="left" open={drawerOpen} onClose={() => { setDrawerIsOpen(false); }}>
-                <List>
+                <List className={styles.drawer}>
                     <div className={styles.toolbar}>
                         <Typography variant="h6">Multipad</Typography>
                     </div>
+                    <Divider />
+                    <ListSubheader className={styles.fileName}>{openPath ?? "Not saved"}</ListSubheader>
                     <Divider />
                     {mainButtons.map((item) => (
                         <ListItem button onClick={() => { setDrawerIsOpen(false); defer(item.action); }}>
@@ -112,6 +157,34 @@ export default function WindowChrome(props: ChromeProps) {
                             <ListItemText>{item.text}</ListItemText>
                         </ListItem>
                     ))}
+                    <ListItem button onClick={() => { defer(saveAs); }}>
+                        <ListItemIcon><SaveIcon/></ListItemIcon>
+                        <ListItemText>Save as</ListItemText>
+                    </ListItem>
+                    <Divider />
+                    <ListSubheader className={styles.sectionHeader}>Switch module</ListSubheader>
+                    {moduleOptions.top !== undefined && (
+                        <>
+                            <ListSubheader className={styles.subheader}>Recommended</ListSubheader>
+                            <OptionButton option={moduleOptions.top}/>
+                        </>
+                    )}
+                    {moduleOptions.seconds && (
+                        <>
+                            <ListSubheader className={styles.subheader}>Other options</ListSubheader>
+                            {moduleOptions.seconds.map((item) => (
+                                <OptionButton key={item} option={item}/>
+                            ))}
+                        </>
+                    )}
+                    {moduleOptions.remaining && (
+                        <>
+                            <ListSubheader className={styles.subheader}>Not recommended</ListSubheader>
+                            {moduleOptions.remaining.map((item) => (
+                                <OptionButton key={item} option={item}/>
+                            ))}
+                        </>
+                    )}
                 </List>
             </Drawer>
         </>

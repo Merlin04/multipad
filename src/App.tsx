@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import WindowChrome from './components/WindowChrome';
-import { chooseModule } from './modules/modules';
-import { useOpenPath } from './providers/OpenPathProvider';
+import { getModuleOptions, ModuleOption, moduleOptionToModule, ModuleProps } from './modules/modules';
+import { useModule, useOpenPath } from './providers/EditorStateProvider';
 const { dialog } = window.require("electron").remote;
 
 const useStyles = makeStyles((theme) => ({
@@ -16,9 +16,19 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const styles = useStyles();
-  const [ lastSave, setLastSave ] = useState(undefined as Date | undefined);
-  const [ newToggle, setNewToggle ] = useState(undefined as boolean | undefined);
+  const [ lastSave, setLastSave ] = useState<Date | undefined>(undefined);
+  const [ newToggle, setNewToggle ] = useState<boolean | undefined>(undefined);
   const { openPath, setOpenPath} = useOpenPath();
+  const { module, setModule } = useModule();
+
+  useEffect(() => {
+    setModule(getModuleOptions(openPath ?? "file.txt").top ?? ModuleOption.Monaco);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setLastSave(undefined);
+  }, [module])
 
   async function openFile() {
     const results: {
@@ -28,9 +38,8 @@ function App() {
     if(results.cancelled) return;
     const file = results.filePaths[0];
     setOpenPath(file);
+    setModule(getModuleOptions(file).top ?? ModuleOption.Monaco);
   }
-
-  const Module = chooseModule(openPath ?? "file.txt");
 
   function saveFile() {
     setLastSave(new Date());
@@ -39,6 +48,8 @@ function App() {
   function newFile() {
     setNewToggle(!newToggle);
   }
+
+  const Module = moduleOptionToModule(module ?? ModuleOption.Monaco);
 
   return (
     <div className={"App " + styles.app}>

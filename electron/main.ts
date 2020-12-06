@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, screen } from 'electron';
+import { app, BrowserWindow, protocol, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 
@@ -16,7 +16,8 @@ function createWindow() {
         frame: false,
         webPreferences: {
             nodeIntegration: true,
-            enableRemoteModule: true
+            enableRemoteModule: true,
+            webSecurity: false
         }
     });
 
@@ -45,4 +46,11 @@ app.on('activate', () => {
     if(mainWindow === null) {
         createWindow();
     }
+});
+
+app.whenReady().then(() => {
+    protocol.registerFileProtocol('file', (request, callback) => {
+        const pathname = decodeURI(request.url.replace('file:///', ''));
+        callback(pathname);
+    });
 });
