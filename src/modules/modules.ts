@@ -1,12 +1,8 @@
 import path from 'path';
+import fs from 'fs';
 import MarkdownModule from './MarkdownModule';
 import MonacoModule from './MonacoModule';
 import ImageModule from './ImageModule';
-
-export interface ModuleProps {
-    lastSave: Date | undefined,
-    newToggle: boolean | undefined
-}
 
 export enum ModuleOption {
     Monaco,
@@ -81,4 +77,18 @@ export function getNameOfOption(option: ModuleOption) {
             return "Image";
         }
     }
+}
+
+export const genericEditorOnSaveCallback = (openPath: string | undefined, dialog: any, editorContents: string) => {
+    let savePath = openPath;
+    if(savePath === undefined) {
+        const result: string | undefined = dialog.showSaveDialogSync();
+        if(result === undefined) return;
+        savePath = result;
+    }
+    fs.writeFileSync(savePath, editorContents);
+    if(savePath !== openPath) {
+        return savePath;
+    }
+    return undefined;
 }

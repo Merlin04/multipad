@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ModuleProps } from './modules';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import fs from 'fs';
 import path from 'path';
 import { ControlledEditor, monaco as monacoConfiguration } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import { makeStyles } from '@material-ui/core';
-import { useOpenPath } from '../providers/EditorStateProvider';
+import { useModule, useOnOpen, useOnSave } from '../providers/EditorStateProvider';
+import { genericEditorOnSaveCallback } from './modules';
 const rootPath: string = window.require('electron-root-path').rootPath;
 const { dialog } = window.require("electron").remote;
 
@@ -36,12 +36,11 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function MonacoModule(props: ModuleProps) {
+export default function MonacoModule() {
     const styles = useStyles();
-    const { openPath, setOpenPath } = useOpenPath();
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
     const [ editorContents, setEditorContents ] = useState("");
-    const [ firstLoad, setFirstLoad ] = useState(true);
+    const { openPath } = useModule();
 
     function handleEditorDidMount(_: any, editor: any) {
         editorRef.current = editor;
@@ -57,39 +56,18 @@ export default function MonacoModule(props: ModuleProps) {
         });
     }, []);
 
-    useEffect(() => {
+    useOnOpen(useCallback((newPath) => {
         monaco.editor.getModels().forEach(model => model.dispose());
-        const fileContents = openPath === undefined ? "" : fs.readFileSync(openPath, 'utf8');
+        const fileContents = newPath === undefined ? "" : fs.readFileSync(newPath, 'utf8');
         editorRef.current?.setModel(monaco.editor.createModel(
             fileContents,
             undefined,
-            new monaco.Uri().with({ path: openPath ?? "file.txt" })
+            new monaco.Uri().with({ path: newPath ?? "file.txt" })
         ))
         setEditorContents(fileContents);
-    }, [openPath]);
+    }, []));
 
-    useEffect(() => {
-        if(props.lastSave === undefined) return;
-        let savePath = openPath;
-        if(savePath === undefined) {
-            const result: string | undefined = dialog.showSaveDialogSync();
-            if(result === undefined) return;
-            setOpenPath(result);
-            savePath = result;
-        }
-        fs.writeFileSync(savePath, editorContents);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.lastSave]);
-
-    useEffect(() => {
-        if(firstLoad) {
-            setFirstLoad(false);
-            return;
-        }
-        if(props.newToggle === undefined) return;
-        setOpenPath(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.newToggle])
+    useOnSave(useCallback(() => genericEditorOnSaveCallback(openPath, dialog, editorContents), [openPath, editorContents]));
 
     return (
         <ControlledEditor

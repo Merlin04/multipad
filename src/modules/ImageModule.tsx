@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
-import { ModuleOption, ModuleProps } from './modules';
 import { makeStyles } from '@material-ui/core';
-import { useModule, useOpenPath } from '../providers/EditorStateProvider';
+import { useConfigureModule, useModule } from '../providers/EditorStateProvider';
 import path from 'path';
+import { useMemo } from 'react';
 
 const useStyles = makeStyles((theme) => ({
     editor: {
@@ -13,18 +12,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function ImageModule(props: ModuleProps) {
+export default function ImageModule() {
     const styles = useStyles();
-    const { openPath, setOpenPath } = useOpenPath();
-    const { setModule } = useModule();
+    const { openPath } = useModule();
 
-    useEffect(() => {
-        if(props.newToggle === undefined) return;
-        setOpenPath(undefined);
-        setModule(ModuleOption.Monaco);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.newToggle])
-
+    useConfigureModule(useMemo(() => ({
+        showSave: false
+    }), []));
+        
     if(openPath === undefined) return <div></div>
     return (
         <div className={styles.editor}>

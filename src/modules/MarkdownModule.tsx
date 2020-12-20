@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { ModuleProps } from './modules';
+import React, { useCallback, useState } from 'react';
 import fs from 'fs';
 import { makeStyles } from '@material-ui/core';
-import { useOpenPath } from '../providers/EditorStateProvider';
+import { useModule, useOnOpen, useOnSave } from '../providers/EditorStateProvider';
 import SimpleMDEEditor from 'react-simplemde-editor';
 import "easymde/dist/easymde.min.css";
+import { genericEditorOnSaveCallback } from './modules';
 const { dialog } = window.require("electron").remote;
 
 const useStyles = makeStyles((theme) => ({
@@ -34,39 +34,17 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function MarkdownModule(props: ModuleProps) {
+export default function MarkdownModule() {
     const styles = useStyles();
-    const { openPath, setOpenPath } = useOpenPath();
     const [ editorContents, setEditorContents ] = useState("");
-    const [ firstLoad, setFirstLoad ] = useState(true);
+    const { openPath } = useModule();
 
-    useEffect(() => {
-        const fileContents = openPath === undefined ? "" : fs.readFileSync(openPath, 'utf8');
+    useOnOpen(useCallback((newPath) => {
+        const fileContents = newPath === undefined ? "" : fs.readFileSync(newPath, 'utf8');
         setEditorContents(fileContents);
-    }, [openPath]);
+    }, [setEditorContents]));
 
-    useEffect(() => {
-        if(props.lastSave === undefined) return;
-        let savePath = openPath;
-        if(savePath === undefined) {
-            const result: string | undefined = dialog.showSaveDialogSync();
-            if(result === undefined) return;
-            setOpenPath(result);
-            savePath = result;
-        }
-        fs.writeFileSync(savePath, editorContents);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.lastSave]);
-
-    useEffect(() => {
-        if(firstLoad) {
-            setFirstLoad(false);
-            return;
-        }
-        if(props.newToggle === undefined) return;
-        setOpenPath(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.newToggle])
+    useOnSave(useCallback(() => genericEditorOnSaveCallback(openPath, dialog, editorContents), [openPath, editorContents]));
 
     return (
         <SimpleMDEEditor className={styles.editor} onChange={setEditorContents} value={editorContents}/>

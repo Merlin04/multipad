@@ -9,6 +9,13 @@ module.exports = {
             new MonacoEditorWebpackPlugin()
         ]
     },
+    eslint: {
+        plugins: ["multipad"],
+        rules: {
+            "multipad/usecallback-with-module-hook": 1,
+            "multipad/usememo-with-useconfiguremodule": 1
+        }
+    },
     plugins: [
         {
             plugin: {
