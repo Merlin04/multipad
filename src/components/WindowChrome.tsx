@@ -7,9 +7,12 @@ import {
     FolderOpen as OpenIcon,
     Minimize as MinimizeIcon,
     Maximize as MaximizeIcon,
-    Close as CloseIcon } from '@material-ui/icons';
+    Close as CloseIcon,
+    Brightness4 as DarkIcon,
+    BrightnessHigh as LightIcon } from '@material-ui/icons';
 import path from 'path';
 import { useModule } from '../providers/EditorStateProvider';
+import { useDarkTheme } from '../providers/DarkThemeProvider';
 import defer from 'lodash/defer';
 import { getModuleOptions, getNameOfOption, ModuleOption } from '../modules/modules';
 const { BrowserWindow, dialog } = window.require("electron").remote;
@@ -58,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
 export default function WindowChrome() {
     const styles = useStyles();
     const { openPath, moduleConfig, save, saveAs, newFile, open, setModule } = useModule();
+    const [ isDark, setIsDark ] = useDarkTheme();
     const [ drawerOpen, setDrawerIsOpen ] = useState(false);
 
     let mainButtons: IMainButton[] = [
@@ -143,9 +147,16 @@ export default function WindowChrome() {
                             <ListItemText>{item.text}</ListItemText>
                         </ListItem>
                     ))}
-                    <ListItem button onClick={() => { defer(saveAs); }}>
-                        <ListItemIcon><SaveIcon/></ListItemIcon>
-                        <ListItemText>Save as</ListItemText>
+                    {(moduleConfig.showSave || openPath !== undefined) && (
+                        <ListItem button onClick={() => { defer(saveAs); }}>
+                            <ListItemIcon><SaveIcon/></ListItemIcon>
+                            <ListItemText>Save as</ListItemText>
+                        </ListItem>
+                    )}
+                    <Divider />
+                    <ListItem button onClick={() => { setIsDark(!isDark); }}>
+                        <ListItemIcon>{ isDark ? <LightIcon/> : <DarkIcon /> }</ListItemIcon>
+                        <ListItemText>Theme</ListItemText>
                     </ListItem>
                     <Divider />
                     <ListSubheader className={styles.sectionHeader}>Switch module</ListSubheader>

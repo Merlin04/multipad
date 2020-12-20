@@ -5,7 +5,7 @@ const { dialog } = window.require("electron").remote;
 
 // setState can accept a parameter of type T or a function which returns a value of type T
 type StateHookValues<T> = [T, {(_: (T | {(): T})): void}];
-type ContextProps<T> = [T, {(_: T): void}];
+export type ContextProps<T> = [T, {(_: T): void}];
 type Callback = {(): void};
 type SaveCallback = {(): string | void};
 type OpenCallback = {(path: string | undefined): void};
@@ -44,7 +44,7 @@ interface MultipleContextsProps {
     children: React.ReactNode
 }
 
-const MultipleContexts = ({ contexts, children }: MultipleContextsProps) =>
+export const MultipleContexts = ({ contexts, children }: MultipleContextsProps) =>
     [
         // @ts-ignore
         { ...contexts[0], props: { ...contexts[0].props, children } },
@@ -61,11 +61,11 @@ function functionStateWrapper<T>(state: StateHookValues<T>): [T, {(_: T): void}]
     ]
 }
 
-interface EditorStateProviderProps {
-    children: React.ReactNode
+export interface ProviderProps {
+    children?: React.ReactNode
 }
 
-export function EditorStateProvider(props: EditorStateProviderProps) {
+export function EditorStateProvider(props: ProviderProps) {
     const pathState = useState<string | undefined>(undefined);
     const moduleState = useState<ModuleOption>(ModuleOption.Monaco);
     const moduleConfigState = useState<ModuleConfig>(DEFAULT_MODULE_CONFIG);

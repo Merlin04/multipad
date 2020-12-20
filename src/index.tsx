@@ -4,11 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { EditorStateProvider } from './providers/EditorStateProvider';
+import DarkThemeProvider from './providers/DarkThemeProvider';
 
 ReactDOM.render(
   <React.StrictMode>
     <EditorStateProvider>
-      <App />
+      <DarkThemeProvider>
+        <App />
+      </DarkThemeProvider>
     </EditorStateProvider>
   </React.StrictMode>,
   document.getElementById('root')

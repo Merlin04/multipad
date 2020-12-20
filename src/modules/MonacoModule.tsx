@@ -6,6 +6,7 @@ import * as monaco from 'monaco-editor';
 import { makeStyles } from '@material-ui/core';
 import { useModule, useOnOpen, useOnSave } from '../providers/EditorStateProvider';
 import { genericEditorOnSaveCallback } from './modules';
+import { useDarkTheme } from '../providers/DarkThemeProvider';
 const rootPath: string = window.require('electron-root-path').rootPath;
 const { dialog } = window.require("electron").remote;
 
@@ -41,6 +42,7 @@ export default function MonacoModule() {
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
     const [ editorContents, setEditorContents ] = useState("");
     const { openPath } = useModule();
+    const [ isDark ] = useDarkTheme();
 
     function handleEditorDidMount(_: any, editor: any) {
         editorRef.current = editor;
@@ -72,6 +74,7 @@ export default function MonacoModule() {
     return (
         <ControlledEditor
             className={styles.editor}
+            theme={isDark ? "dark" : "light"}
             editorDidMount={handleEditorDidMount}
             onChange={editorChange}
             value={editorContents}
