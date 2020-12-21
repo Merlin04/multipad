@@ -4,7 +4,7 @@ import path from 'path';
 import { ControlledEditor, monaco as monacoConfiguration } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import { makeStyles } from '@material-ui/core';
-import { useModule, useOnOpen, useOnSave } from '../providers/EditorStateProvider';
+import { useModule, useOnMarshalIn, useOnMarshalOut, useOnOpen, useOnSave } from '../providers/EditorStateProvider';
 import { genericEditorOnSaveCallback } from './modules';
 import { useDarkTheme } from '../providers/DarkThemeProvider';
 const rootPath: string = window.require('electron-root-path').rootPath;
@@ -70,6 +70,18 @@ export default function MonacoModule() {
     }, []));
 
     useOnSave(useCallback(() => genericEditorOnSaveCallback(openPath, dialog, editorContents), [openPath, editorContents]));
+
+    useOnMarshalIn(useCallback((data) => {
+        monaco.editor.getModels().forEach(model => model.dispose());
+        editorRef.current?.setModel(monaco.editor.createModel(
+            data,
+            undefined,
+            new monaco.Uri().with({ path: openPath ?? "file.txt" })
+        ))
+        setEditorContents(data);
+    }, [openPath]));
+
+    useOnMarshalOut(useCallback(() => editorContents, [editorContents]))
 
     return (
         <ControlledEditor

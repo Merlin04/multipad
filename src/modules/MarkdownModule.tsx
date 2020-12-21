@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import fs from 'fs';
 import { makeStyles } from '@material-ui/core';
-import { useModule, useOnOpen, useOnSave } from '../providers/EditorStateProvider';
+import { useModule, useOnMarshalIn, useOnMarshalOut, useOnOpen, useOnSave } from '../providers/EditorStateProvider';
 import SimpleMDEEditor from 'react-simplemde-editor';
 import "easymde/dist/easymde.min.css";
 import { genericEditorOnSaveCallback } from './modules';
@@ -59,6 +59,9 @@ export default function MarkdownModule() {
     }, [setEditorContents]));
 
     useOnSave(useCallback(() => genericEditorOnSaveCallback(openPath, dialog, editorContents), [openPath, editorContents]));
+
+    useOnMarshalIn(useCallback(setEditorContents, [setEditorContents]));
+    useOnMarshalOut(useCallback(() => editorContents, [editorContents]));
 
     return (
         <SimpleMDEEditor className={styles.editor + (isDark ? " " + styles.editorDark : "")} onChange={setEditorContents} options={{

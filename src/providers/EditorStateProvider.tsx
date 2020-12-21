@@ -9,8 +9,8 @@ export type ContextProps<T> = [T, {(_: T): void}];
 type Callback = {(): void};
 type SaveCallback = {(): string | void};
 type OpenCallback = {(path: string | undefined): void};
-type BeforeModuleSwitchCallback = {(): string};
-type AfterModuleSwitchCallback = {(data: string): void};
+type MarshalOutCallback = {(): string};
+type MarshalInCallback = {(data: string): void};
 
 const DEFAULT_MODULE_CONFIG = {
     showSave: true
@@ -25,8 +25,8 @@ const ModuleConfigContext = createContext({} as ContextProps<ModuleConfig>);
 const OnSaveContext = createContext({} as ContextProps<SaveCallback | undefined>);
 const OnOpenContext = createContext({} as ContextProps<OpenCallback | undefined>);
 const OnNewContext = createContext({} as ContextProps<Callback | undefined>);
-const OnBeforeModuleSwitchContext = createContext({} as ContextProps<BeforeModuleSwitchCallback | undefined>);
-const OnAfterModuleSwitchContext = createContext({} as ContextProps<AfterModuleSwitchCallback | undefined>);
+const OnMarshalOutContext = createContext({} as ContextProps<MarshalOutCallback | undefined>);
+const OnMarshalInContext = createContext({} as ContextProps<MarshalInCallback | undefined>);
 
 //#endregion
 //#region Flags
@@ -36,6 +36,9 @@ const OnAfterModuleSwitchContext = createContext({} as ContextProps<AfterModuleS
 
 // useOnOpen: run the open function
 let OpenFlag: undefined | string = undefined;
+
+// useOnMarshalIn: there is data to be marshaled into the module
+let MarshalInFlag: undefined | string = undefined;
 
 //#endregion
 
@@ -73,10 +76,10 @@ export function EditorStateProvider(props: ProviderProps) {
     const onSaveState = functionStateWrapper<SaveCallback | undefined>(useState<SaveCallback | undefined>(undefined));
     const onOpenState = functionStateWrapper<OpenCallback | undefined>(useState<OpenCallback | undefined>(undefined));
     const onNewState = functionStateWrapper<Callback | undefined>(useState<Callback | undefined>(undefined));
-    const onBeforeModuleSwitchState = functionStateWrapper<BeforeModuleSwitchCallback | undefined>(
-        useState<BeforeModuleSwitchCallback | undefined>(undefined));
-    const onAfterModuleSwitchState = functionStateWrapper<AfterModuleSwitchCallback | undefined>(
-        useState<AfterModuleSwitchCallback | undefined>(undefined));
+    const onMarshalOutState = functionStateWrapper<MarshalOutCallback | undefined>(
+        useState<MarshalOutCallback | undefined>(undefined));
+    const onMarshalInState = functionStateWrapper<MarshalInCallback | undefined>(
+        useState<MarshalInCallback | undefined>(undefined));
 
     return (
         <MultipleContexts contexts={[
@@ -86,8 +89,8 @@ export function EditorStateProvider(props: ProviderProps) {
             <OnSaveContext.Provider value={onSaveState}/>,
             <OnOpenContext.Provider value={onOpenState}/>,
             <OnNewContext.Provider value={onNewState}/>,
-            <OnBeforeModuleSwitchContext.Provider value={onBeforeModuleSwitchState}/>,
-            <OnAfterModuleSwitchContext.Provider value={onAfterModuleSwitchState}/>
+            <OnMarshalOutContext.Provider value={onMarshalOutState}/>,
+            <OnMarshalInContext.Provider value={onMarshalInState}/>
         ]}>
             { props.children }
         </MultipleContexts>
@@ -140,13 +143,20 @@ export function useOnNew(callback: Callback) {
 }
 
 // Called before module switch to keep any unsaved data
-export function useOnBeforeModuleSwitch(callback: BeforeModuleSwitchCallback) {
-    useGenericModuleHook(callback, OnBeforeModuleSwitchContext);
+export function useOnMarshalOut(callback: MarshalOutCallback) {
+    useGenericModuleHook(callback, OnMarshalOutContext);
 }
 
 // Called after module switch to load unsaved data from previous module
-export function useOnAfterModuleSwitch(callback: AfterModuleSwitchCallback) {
-    useGenericModuleHook(callback, OnAfterModuleSwitchContext);
+export function useOnMarshalIn(callback: MarshalInCallback) {
+    useGenericModuleHook(callback, OnMarshalInContext);
+    useEffect(() => {
+        if(MarshalInFlag !== undefined) {
+            callback(MarshalInFlag);
+            MarshalInFlag = undefined;
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 }
 
 //#endregion
@@ -159,8 +169,8 @@ export function useModule() {
     const [contextOpen, contextSetOpen] = useContext(OnOpenContext);
     const [contextNew, contextSetNew] = useContext(OnNewContext);
     const [openPath, setOpenPath] = useContext(OpenPathContext);
-    const [beforeModuleSwitch, contextSetBeforeModuleSwitch] = useContext(OnBeforeModuleSwitchContext);
-    const [, contextSetAfterModuleSwitch] = useContext(OnAfterModuleSwitchContext);
+    const [marshalOut, contextSetMarshalOut] = useContext(OnMarshalOutContext);
+    const [, contextSetMarshalIn] = useContext(OnMarshalInContext);
 
     const setModuleAndConfig = (option: ModuleOption) => {
         // Set the module config to defaults so if the module doesn't call useConfigureModule it won't use the previous module's config
@@ -171,11 +181,12 @@ export function useModule() {
         contextSetSave(undefined);
         contextSetOpen(undefined);
         contextSetNew(undefined);
-        contextSetBeforeModuleSwitch(undefined);
-        contextSetAfterModuleSwitch(undefined);
+        contextSetMarshalOut(undefined);
+        contextSetMarshalIn(undefined);
 
         // Clear all of the flags
         OpenFlag = undefined;
+        MarshalInFlag = undefined;
 
         // Switch the module
         contextSetModule(option);
@@ -238,10 +249,9 @@ export function useModule() {
             open(undefined);
         },
         setModule: (option: ModuleOption) => {
-            // const data = beforeModuleSwitch === undefined ? undefined : beforeModuleSwitch();
+            const data = marshalOut === undefined ? undefined : marshalOut();
             setModuleAndConfig(option);
-            // TODO: load data into new module
-            // This will require setting some sort of flag that is read back when useOnAfterModuleSwitch is called
+            MarshalInFlag = data;
         }
     };
 }
